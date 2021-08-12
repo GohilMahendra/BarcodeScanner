@@ -1,0 +1,61 @@
+# Check out https://docs.codemagic.io/getting-started/building-a-react-native-app/ for more information
+# Please review and update values in curly braces
+
+workflows:
+    react-native:
+        name: React Native workflow
+        environment:
+            vars:
+                XCODE_WORKSPACE: "BarcodeScanner"
+                XCODE_SCHEME: "BarcodeScanner"
+                
+            node: latest
+            xcode: latest
+            cocoapods: default
+        # triggering:
+        #     events:
+        #         - push
+        #     branch_patterns:
+        #         - pattern: master
+        #             include: true
+        #             source: true
+        scripts:
+            - npm install
+              
+          
+
+            - echo "sdk.dir=$HOME/programs/android-sdk-macosx" > "$FCI_BUILD_DIR/android/local.properties"
+          
+           
+            - | 
+                if [[ $(jq -r ."build" build_data/data.json) == "ios" ]] || [[ $(jq -r ."build" build_data/data.json) == "both" ]] ; then
+                # build iOS
+                cd ios
+                pod install
+                react-native bundle --entry-file='index.js' --bundle-output='./ios/app/main.jsbundle' --dev=false --platform='ios' --assets-dest='./ios'
+                ls
+                # xcodebuild build -workspace "$XCODE_WORKSPACE.xcworkspace" -scheme "$XCODE_SCHEME" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
+                xcodebuild -sdk iphonesimulator -workspace "$XCODE_WORKSPACE.xcworkspace" -scheme "$XCODE_SCHEME" -configuration Debug
+                fi 
+                
+            # - |
+            #     # build iOS
+            #     cd ios
+            #     pod install
+            #     ls
+            #     
+            #     xcodebuild -scheme "$XCODE_SCHEME" -workspace "$XCODE_WORKSPACE.xcworkspace" -sdk iphonesimulator      
+        artifacts:          
+
+             - $HOME/Library/Developer/Xcode/DerivedData/**/Build/Products/*-iphonesimulator/Medicare.app
+             - android/app/build/outputs/**/*.apk
+          
+             - ios/Build/*.xcarchive
+             - ios/Build/*.ipa
+             - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
+             - ios/Build/*.app
+             - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.xcarchive
+             - $HOME/Library/Developer/Xcode/DerivedData/**/Build/Products/*-iphonesimulator/*.app
+                
+                  
+            

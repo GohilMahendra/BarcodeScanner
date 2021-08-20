@@ -35,7 +35,7 @@ workflows:
                 
                 ls
                 # xcodebuild build -workspace "$XCODE_WORKSPACE.xcworkspace" -scheme "$XCODE_SCHEME" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
-                xcodebuild -sdk iphonesimulator -workspace "$XCODE_WORKSPACE.xcworkspace" -scheme "$XCODE_SCHEME" -configuration Debug
+                xcodebuild -sdk iphonesimulator -workspace "$XCODE_WORKSPACE.xcworkspace" -scheme "$XCODE_SCHEME" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO -configuration Debug
                 fi 
                 
             # - |
